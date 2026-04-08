@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">Assesment1</string>
+    <string name="app_name">FitLog</string>
+    <string name="height">Tinggi</string>
+    <string name="weight">Berat</string>
+    <string name="input_invalid">Tidak Boleh kosong</string>
+    <string name="pria">Pria</string>
+    <string name="wanita">Wanita</string>
+    <string name="hitung">Hitung</string>
+    <string name="usia">Usia</string>
+
 </resources>
