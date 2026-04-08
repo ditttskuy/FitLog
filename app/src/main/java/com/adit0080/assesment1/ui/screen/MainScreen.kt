@@ -1,5 +1,7 @@
 package com.adit0080.assesment1.ui.screen
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -79,10 +81,10 @@ fun MainScreen(navController: NavHostController) {
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.app_name),color = MaterialTheme.colorScheme.onBackground)
+                    Text(text = stringResource(R.string.app_name),color = MaterialTheme.colorScheme.primary)
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
@@ -217,7 +219,7 @@ fun MainScreen(navController: NavHostController) {
                     return@Button
                 }
 
-                kaloriHarian =HitungKalori(tinggi.toDouble(),berat.toDouble(),usia.toInt(),gender == radioOptions[0],tingkatAktivitas)
+                kaloriHarian = hitungKalori(tinggi.toDouble(),berat.toDouble(),usia.toInt(),gender == radioOptions[0],tingkatAktivitas)
                 navController.navigate("${Screen.Result.route}/$kaloriHarian")
             }
 
@@ -242,7 +244,7 @@ fun ActivityOptionCard(
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer
+            containerColor = if (isSelected) Color(0xFF064E3B)
             else
                 MaterialTheme.colorScheme.surface
         ),
@@ -254,7 +256,7 @@ fun ActivityOptionCard(
         ) {
             RadioButton(selected = isSelected, onClick = null)
             Spacer(Modifier.width(12.dp))
-            Text(text = label, fontWeight = FontWeight.Medium,color = MaterialTheme.colorScheme.onBackground)
+            Text(text = label, fontWeight = FontWeight.Medium)
         }
     }
 }
@@ -274,7 +276,9 @@ fun GenderOption(label: String, isSelected: Boolean, modifier: Modifier) {
     }
 }
 
-private fun HitungKalori(tinggi: Double, berat: Double, usia: Int, isMale: Boolean,tingkatAktivitas: String): Int {
+
+
+private fun hitungKalori(tinggi: Double, berat: Double, usia: Int, isMale: Boolean,tingkatAktivitas: String): Int {
    val bmr = if (isMale){
         (10 * berat) + (6.25 * tinggi) - (5 * usia) + 5
     } else {

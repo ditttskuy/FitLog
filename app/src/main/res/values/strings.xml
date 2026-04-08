@@ -7,5 +7,7 @@
     <string name="wanita">Wanita</string>
     <string name="hitung">Hitung</string>
     <string name="usia">Usia</string>
-
+    <string name="bagikan">Bagikan</string>
+    <string name="kembali">Kembali</string>
+    <string name="bagikan_template">Kebutuhan kalori harian saya adalah %1$d kkal</string>
 </resources>
