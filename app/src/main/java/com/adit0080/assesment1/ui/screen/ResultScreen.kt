@@ -1,12 +1,10 @@
 package com.adit0080.assesment1.ui.screen
 
-import android.R.id.message
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -77,7 +75,7 @@ fun ResultScreenContent(kalori: Int,navController: NavHostController, modifier: 
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Kebutuhan Kalori Harian Anda:")
+        Text(text = stringResource(R.string.kaloriHarian))
 
         Text(
             text = "$kalori kkal",
@@ -95,7 +93,7 @@ fun ResultScreenContent(kalori: Int,navController: NavHostController, modifier: 
             modifier = Modifier.fillMaxWidth(),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 16.dp)
         ) {
-            Text(text = "BAGIKAN HASIL")
+            Text(text = stringResource(R.string.bagikan))
         }
     }
 }

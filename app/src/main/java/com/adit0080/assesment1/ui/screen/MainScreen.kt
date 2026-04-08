@@ -1,7 +1,5 @@
 package com.adit0080.assesment1.ui.screen
 
-import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -45,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -114,9 +113,10 @@ fun MainScreen(navController: NavHostController) {
         stringResource(R.string.wanita)
     )
     var gender by rememberSaveable {mutableStateOf(radioOptions[0])}
-    var tingkatAktivitas by rememberSaveable{mutableStateOf("Ringan") }
+    var tingkatAktivitas by rememberSaveable{mutableStateOf("Normal") }
 
     var kaloriHarian by rememberSaveable {mutableIntStateOf(0)}
+    val context = LocalContext.current
 
 
 
@@ -124,7 +124,7 @@ fun MainScreen(navController: NavHostController) {
         modifier = modifier.verticalScroll(rememberScrollState()).fillMaxWidth().padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        Text(text = "Daily Calorie tracker",
+        Text(text = stringResource(R.string.deskripsi),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom =16.dp),color = MaterialTheme.colorScheme.onBackground)
@@ -141,7 +141,7 @@ fun MainScreen(navController: NavHostController) {
     onValueChange ={tinggi = it},
     modifier = Modifier.fillMaxWidth(),
     placeholder = {
-        Text(text = "Masukan Tinggi Badan", color = MaterialTheme.colorScheme.onBackground)
+        Text(text = stringResource(R.string.masukanTinggi), color = MaterialTheme.colorScheme.onBackground)
     },
         trailingIcon = {IconPicker(tinggiError,"cm")},
         singleLine = true,
@@ -158,7 +158,7 @@ fun MainScreen(navController: NavHostController) {
             onValueChange ={berat = it},
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
-                Text(text = "Masukan Berat Badan", color = MaterialTheme.colorScheme.onBackground)
+                Text(text = stringResource(R.string.masukanBerat), color = MaterialTheme.colorScheme.onBackground)
             },
             trailingIcon = {IconPicker(beratError,"cm")},
             singleLine = true,
@@ -174,9 +174,9 @@ fun MainScreen(navController: NavHostController) {
             onValueChange ={usia = it},
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
-                Text(text = "Masukan Usia", color = MaterialTheme.colorScheme.onBackground)
+                Text(text = stringResource(R.string.masukanUsia), color = MaterialTheme.colorScheme.onBackground)
             },
-            trailingIcon = {IconPicker(usiaError,"cm")},
+            trailingIcon = {IconPicker(usiaError,"")},
 
 
             singleLine = true,
@@ -187,15 +187,15 @@ fun MainScreen(navController: NavHostController) {
         )
         ErrorHint(usiaError)
 
-        Text(text = "Tingkat Aktivitas", fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
-        listOf("Ringan", "Normal", "Berat").forEach { level ->
+        Text(text = stringResource(R.string.tingkatAktivitas), fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
+        listOf(stringResource(R.string.ringan), stringResource(R.string.normal), stringResource(R.string.berat)).forEach { level ->
             ActivityOptionCard(
                 label = level,
                 isSelected = (tingkatAktivitas == level),
                 onSelect = { tingkatAktivitas = level }
             )
         }
-        Text(text = "Gender",fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
+        Text(text =stringResource(R.string.gender),fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
         Row(
             modifier = Modifier.padding(6.dp).border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
         ) {
@@ -219,7 +219,7 @@ fun MainScreen(navController: NavHostController) {
                     return@Button
                 }
 
-                kaloriHarian = hitungKalori(tinggi.toDouble(),berat.toDouble(),usia.toInt(),gender == radioOptions[0],tingkatAktivitas)
+                kaloriHarian = hitungKalori(tinggi.toDouble(),berat.toDouble(),usia.toInt(),gender == radioOptions[0],tingkatAktivitas,context)
                 navController.navigate("${Screen.Result.route}/$kaloriHarian")
             }
 
@@ -278,16 +278,16 @@ fun GenderOption(label: String, isSelected: Boolean, modifier: Modifier) {
 
 
 
-private fun hitungKalori(tinggi: Double, berat: Double, usia: Int, isMale: Boolean,tingkatAktivitas: String): Int {
+private fun hitungKalori(tinggi: Double, berat: Double, usia: Int, isMale: Boolean,tingkatAktivitas: String,context: android.content.Context): Int {
    val bmr = if (isMale){
         (10 * berat) + (6.25 * tinggi) - (5 * usia) + 5
     } else {
         (10 * berat) + (6.25 * tinggi) - (5 * usia) - 161
     }
     val multiplier = when (tingkatAktivitas) {
-        "Ringan" -> 1.375
-        "Normal" -> 1.55
-        "Berat" -> 1.725
+        context.getString(R.string.ringan) -> 1.375
+        context.getString(R.string.normal) -> 1.55
+        context.getString(R.string.berat) -> 1.725
         else -> 1.2
     }
     val tdee = bmr * multiplier

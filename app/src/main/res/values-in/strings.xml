@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FitLog</string>
+    <string name="bagikan_template">Kebutuhan kalori harian saya adalah %1$d kkal</string>
+    <string name="kaloriHarian">Kebutuhan Kalori Harian Anda</string>
+    <string name="deskripsi">Penghitung Kalori Harian</string>
+    <string name="masukanTinggi">Masukan Tinggi</string>
+    <string name="masukanBerat">Masukan Berat</string>
+    <string name="masukanUsia">Masukan Usia</string>
+    <string name="tingkatAktivitas">Tingkat Aktivitas</string>
+    <string name="gender">Jenis Kelamin</string>
+    <string name="height">Tinggi</string>
+    <string name="weight">Berat</string>
+    <string name="input_invalid">"Tidak Boleh Kosong "</string>
+    <string name="pria">Pria</string>
+    <string name="wanita">Wanita</string>
+    <string name="hitung">Hitung</string>
+    <string name="usia">Usia</string>
+    <string name="bagikan">Bagikan</string>
+    <string name="kembali">Kembali</string>
+    <string name="ringan">Ringan</string>
+    <string name="normal">Normal</string>
+    <string name="berat">Berat</string>
+</resources>
