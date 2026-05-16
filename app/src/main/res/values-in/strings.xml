@@ -2,11 +2,12 @@
 <resources>
     <string name="app_name">FitLog</string>
     <string name="bagikan_template">Kebutuhan kalori harian saya adalah %1$d kkal</string>
-    <string name="kaloriHarian">Kebutuhan Kalori Harian Anda</string>
+    <string name="kaloriHarian">Kebutuhan Kalori Harian: %d kkal</string>
     <string name="deskripsi">Penghitung Kalori Harian</string>
     <string name="masukanTinggi">Masukan Tinggi</string>
     <string name="masukanBerat">Masukan Berat</string>
     <string name="masukanUsia">Masukan Usia</string>
+    <string name="masukanNama">Masukan Nama</string>
     <string name="tingkatAktivitas">Tingkat Aktivitas</string>
     <string name="gender">Jenis Kelamin</string>
     <string name="height">Tinggi</string>
@@ -21,4 +22,16 @@
     <string name="ringan">Ringan</string>
     <string name="normal">Normal</string>
     <string name="berat">Berat</string>
+    <string name="list">Tampilkan list</string>
+    <string name="grid">Tampilkan grid</string>
+    <string name="edit_data">Ubah data</string>
+    <string name="invalid">Tinggi dan Berat tidak boleh kosong</string>
+    <string name="lainnya">Lainnya</string>
+    <string name="hapus">Hapus</string>
+    <string name="pesan_hapus">Hapus data ini?</string>
+    <string name="tombol_hapus">Hapus</string>
+    <string name="tombol_batal">Batal</string>
+    <string name="tambah_data">Tambah data</string>
+    <string name="list_kosong">Belum ada data</string>
+    <string name="nama">nama</string>
 </resources>

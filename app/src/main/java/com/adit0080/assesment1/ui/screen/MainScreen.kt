@@ -7,57 +7,60 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.adit0080.assesment1.R
+import com.adit0080.assesment1.model.Kalori
 import com.adit0080.assesment1.navigation.Screen
 import com.adit0080.assesment1.navigation.SetupnavGraph
 import com.adit0080.assesment1.ui.theme.Assesment1Theme
+import com.adit0080.assesment1.util.SettingsDataStore
+import com.adit0080.assesment1.util.ViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : ComponentActivity() {
@@ -76,241 +79,186 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavHostController) {
+    val dataStore = SettingsDataStore(LocalContext.current)
+    val showList by dataStore.layoutFlow.collectAsState(true)
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = stringResource(R.string.app_name),color = MaterialTheme.colorScheme.primary)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = stringResource(R.string.app_name),color = MaterialTheme.colorScheme.primary)
+
+                        Image(
+                            painter = painterResource(R.drawable.calories_calculator),
+                            contentDescription = "Kalkulator Kalori",
+                            modifier = Modifier.size(50.dp)
+                        )
+                    }
+
                 },
+
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     titleContentColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                actions = {
+                    IconButton(onClick ={
+                        CoroutineScope(Dispatchers.IO).launch {
+                            dataStore.saveLayout(!showList)
+                        }
+                    } )
+                    {
+                        Icon(
+                            painter = painterResource(
+                                if (showList) R.drawable.outline_grid_view_24
+                                else R.drawable.outline_lists_24
+                            ),
+                            contentDescription = stringResource(
+                                if (showList) R.string.grid
+                                else R.string.list
+                            ),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Screen.Detail.route)
+                })
+            {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.tambah_data),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     ) { innerPadding ->
-        ScreenContent(navController,Modifier.padding(innerPadding))
+        ScreenContent(showList,navController,Modifier.padding(innerPadding))
     }
 
 }
 
 @Composable
-    fun ScreenContent(
+fun ScreenContent(
+    showList: Boolean,
     navController: NavHostController,
     modifier: Modifier = Modifier
-    ) {
-    var tinggi by rememberSaveable{ mutableStateOf("") }
-    var tinggiError by  rememberSaveable { mutableStateOf(false) }
-
-    var berat by rememberSaveable {mutableStateOf("") }
-    var beratError by  rememberSaveable { mutableStateOf(false) }
-
-    var usia by rememberSaveable {mutableStateOf("") }
-    var usiaError by  rememberSaveable { mutableStateOf(false) }
-
-    val radioOptions = listOf(
-        stringResource(R.string.pria),
-        stringResource(R.string.wanita)
-    )
-    var gender by rememberSaveable {mutableStateOf(radioOptions[0])}
-    var tingkatAktivitas by rememberSaveable{mutableStateOf("Normal") }
-
-    var kaloriHarian by rememberSaveable {mutableIntStateOf(0)}
+) {
     val context = LocalContext.current
-
-
+    val factory = ViewModelFactory(context)
+    val viewModel: MainViewModel = viewModel(factory = factory)
+    val data by viewModel.data.collectAsState()
 
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState()).fillMaxWidth().padding(16.dp),
-        horizontalAlignment = Alignment.Start
+        modifier = modifier.fillMaxSize()
     ) {
-        Text(text = stringResource(R.string.deskripsi),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom =16.dp),color = MaterialTheme.colorScheme.onBackground)
-        Image(
-            painter = painterResource(R.drawable.calories_calculator),
-            contentDescription = "Kalkulator Kalori",
-            modifier = Modifier.size(150.dp).align(alignment = Alignment.CenterHorizontally)
-
-        )
-
-        Text(text = stringResource(R.string.height), fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
-    OutlinedTextField(
-    value = tinggi,
-    onValueChange ={tinggi = it},
-    modifier = Modifier.fillMaxWidth(),
-    placeholder = {
-        Text(text = stringResource(R.string.masukanTinggi), color = MaterialTheme.colorScheme.onBackground)
-    },
-        trailingIcon = {IconPicker(tinggiError,"cm")},
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Next
-        )
-)
-        ErrorHint(tinggiError)
-
-        Text(text = stringResource(R.string.weight), fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
-        OutlinedTextField(
-            value = berat,
-            onValueChange ={berat = it},
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(text = stringResource(R.string.masukanBerat), color = MaterialTheme.colorScheme.onBackground)
-            },
-            trailingIcon = {IconPicker(beratError,"cm")},
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
-            )
-        )
-        ErrorHint(beratError)
-        Text(text = stringResource(R.string.usia), fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
-        OutlinedTextField(
-            value = usia,
-            onValueChange ={usia = it},
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(text = stringResource(R.string.masukanUsia), color = MaterialTheme.colorScheme.onBackground)
-            },
-            trailingIcon = {IconPicker(usiaError,"")},
-
-
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
-            )
-        )
-        ErrorHint(usiaError)
-
-        Text(text = stringResource(R.string.tingkatAktivitas), fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
-        listOf(stringResource(R.string.ringan), stringResource(R.string.normal), stringResource(R.string.berat)).forEach { level ->
-            ActivityOptionCard(
-                label = level,
-                isSelected = (tingkatAktivitas == level),
-                onSelect = { tingkatAktivitas = level }
-            )
-        }
-        Text(text =stringResource(R.string.gender),fontWeight = FontWeight.Bold,modifier = Modifier.padding(top = 8.dp),color = MaterialTheme.colorScheme.onBackground)
-        Row(
-            modifier = Modifier.padding(6.dp).border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            radioOptions.forEach { text -> GenderOption(
-                label = text,
-                isSelected = gender == text,
-                modifier= Modifier.selectable(selected = gender == text,
-                    onClick = {gender = text},
-                    role = Role.RadioButton
-                ).weight(1f).padding(16.dp)
-            ) }
+            Text(
+                text = stringResource(R.string.deskripsi),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
         }
 
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                tinggiError = (tinggi == "" || tinggi == "0")
-                beratError = (berat == "" || berat == "0")
-                usiaError =  (usia == "" || usia == "0")
-                if (tinggiError || beratError || usiaError){
-                    return@Button
-                }
-
-                kaloriHarian = hitungKalori(tinggi.toDouble(),berat.toDouble(),usia.toInt(),gender == radioOptions[0],tingkatAktivitas,context)
-                navController.navigate("${Screen.Result.route}/$kaloriHarian")
+        if (data.isEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = stringResource(R.string.list_kosong))
             }
-
-        ) {
-            Text(text = stringResource(R.string.hitung),color = MaterialTheme.colorScheme.onBackground)
+        } else {
+            if (showList) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 84.dp)
+                ) {
+                    items(data) {
+                        ListItem(kalori = it) {
+                            navController.navigate(Screen.DetailUbah.withId(it.id))
+                        }
+                        HorizontalDivider()
+                    }
+                }
+            } else {
+                LazyVerticalStaggeredGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = StaggeredGridCells.Fixed(2),
+                    verticalItemSpacing = 8.dp,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 84.dp)
+                ) {
+                    items(data) {
+                        GridItem(kalori = it) {
+                            navController.navigate(Screen.DetailUbah.withId(it.id))
+                        }
+                    }
+                }
+            }
         }
     }
+}
 
 
 
+@Composable
+fun ListItem(kalori: Kalori, onClick: () -> Unit){
+    Column(
+        modifier = Modifier.fillMaxWidth().clickable{onClick()}.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+
+    ){
+        Text(text = kalori.nama,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = FontWeight.Bold)
+        Text(text = stringResource(R.string.kaloriHarian,kalori.hasilKalori),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis)
+        Text(text = kalori.tanggal)
+    }
 }
 
 @Composable
-fun ActivityOptionCard(
-    label: String,
-    isSelected: Boolean,
-    onSelect: () -> Unit
-) {
+fun GridItem(kalori: Kalori, onClick: () -> Unit){
     Card(
-        onClick = onSelect,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth().clickable{onClick()},
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) Color(0xFF064E3B)
-            else
-                MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
-        border = if (isSelected) BorderStroke(2.dp, Color(0xFF4CAF50)) else null
+        border = BorderStroke(1.dp, DividerDefaults.color)
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RadioButton(selected = isSelected, onClick = null)
-            Spacer(Modifier.width(12.dp))
-            Text(text = label, fontWeight = FontWeight.Medium)
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ){
+            Text(text = kalori.nama,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.kaloriHarian,kalori.hasilKalori),
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis)
+            Text(text = kalori.tanggal)
         }
     }
 }
-
-@Composable
-fun GenderOption(label: String, isSelected: Boolean, modifier: Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(selected = isSelected, onClick = null)
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(start = 8.dp),color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
-
-
-private fun hitungKalori(tinggi: Double, berat: Double, usia: Int, isMale: Boolean,tingkatAktivitas: String,context: android.content.Context): Int {
-   val bmr = if (isMale){
-        (10 * berat) + (6.25 * tinggi) - (5 * usia) + 5
-    } else {
-        (10 * berat) + (6.25 * tinggi) - (5 * usia) - 161
-    }
-    val multiplier = when (tingkatAktivitas) {
-        context.getString(R.string.ringan) -> 1.375
-        context.getString(R.string.normal) -> 1.55
-        context.getString(R.string.berat) -> 1.725
-        else -> 1.2
-    }
-    val tdee = bmr * multiplier
-    return tdee.toInt()
-}
-
-
-@Composable
-fun ErrorHint(isError: Boolean) {
-    if (isError) {
-        Text(text = stringResource(R.string.input_invalid),color = MaterialTheme.colorScheme.onBackground)
-    }
-}
-
-@Composable
-fun IconPicker(isError: Boolean, unit: String) {
-    if (isError) {
-        Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
-    } else {
-        Text(text = unit,color = MaterialTheme.colorScheme.onBackground)
-    }
-}
-
 
 
 @Preview(showBackground = true)

@@ -7,8 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.adit0080.assesment1.ui.screen.DetailScreen
 import com.adit0080.assesment1.ui.screen.MainScreen
-import com.adit0080.assesment1.ui.screen.ResultScreen
+
 
 @Composable
 fun SetupnavGraph(navController: NavHostController = rememberNavController()){
@@ -20,15 +21,21 @@ fun SetupnavGraph(navController: NavHostController = rememberNavController()){
             MainScreen(navController)
         }
 
-        composable(route = "${Screen.Result.route}/{kalori}",arguments = listOf(
-            navArgument("kalori") { type = NavType.IntType }
-        )
-
-        ) { backStackEntry ->
-            val angkaKalori = backStackEntry.arguments?.getInt("kalori")?:0
-            ResultScreen(navController, kalori = angkaKalori)
+        composable(route = Screen.Detail.route) {
+            DetailScreen(navController=navController)
         }
 
+        composable(route = Screen.DetailUbah.route,
+            arguments = listOf(
+                navArgument(KEY_ID_KALORI){
+                    type = NavType.LongType
+                }
+            )){
+                navbackStackEntry ->
+            val id = navbackStackEntry.arguments?.getLong(KEY_ID_KALORI)?:0
+            DetailScreen(navController=navController , id = id )
+
+        }
 
     }
 }

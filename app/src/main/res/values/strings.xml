@@ -10,14 +10,29 @@
     <string name="bagikan">Share</string>
     <string name="kembali">Back</string>
     <string name="bagikan_template">My daily calorie requirement is %1$d kcal</string>
-    <string name="kaloriHarian">Your Daily Calorie Requirement:</string>
+    <string name="kaloriHarian">Daily Calorie Requirement: %d kcal</string>
     <string name="deskripsi">Daily Calorie Tracker</string>
     <string name="masukanTinggi">Enter Height</string>
     <string name="masukanBerat">Enter Weight</string>
+    <string name="masukanNama">Enter Name</string>
+
     <string name="masukanUsia">Enter Age</string>
     <string name="tingkatAktivitas">Activity Level</string>
     <string name="gender">Gender</string>
     <string name="ringan">Light</string>
     <string name="normal">Normal</string>
     <string name="berat">Heavy</string>
+    <string name="list">Show List</string>
+    <string name="grid">Show Grid</string>
+    <string name="edit_data">Edit Note</string>
+    <string name="invalid">Height and Weight cannot be empty</string>
+    <string name="lainnya">More</string>
+    <string name="hapus">Delete</string>
+    <string name="pesan_hapus">Delete this data?</string>
+    <string name="tombol_hapus">Delete</string>
+    <string name="tombol_batal">Cancel</string>
+    <string name="tambah_data">add data</string>
+    <string name="list_kosong">No data available yet</string>
+    <string name="nama">Name</string>
+
 </resources>
